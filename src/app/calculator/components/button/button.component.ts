@@ -43,7 +43,6 @@ export class ButtonComponent {
   public keyboardPressedStyle(key: string) {
     const value = this.contentValue()?.nativeElement.innerText.trim();
     if (value === key) {
-      console.log(`La key es: ${key}, el valor del botón es ${value}`);
       this.isPressed.set(true);
     }
     setTimeout(() => {

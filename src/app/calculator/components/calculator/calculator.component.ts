@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, viewChildren } from '@angular/core';
+import { CalculatorService } from '@/calculator/services/calculator.service';
+import { ChangeDetectionStrategy, Component, computed, inject, viewChildren } from '@angular/core';
 import { ButtonComponent } from '../button/button.component';
 
 @Component({
@@ -12,13 +13,31 @@ import { ButtonComponent } from '../button/button.component';
 })
 export class CalculatorComponent {
   /**
+   * Inyección de dependencias
+   */
+  private _calculatorService = inject(CalculatorService);
+
+  /**
    * Miembros de clase
    */
   public calculatorButtons = viewChildren(ButtonComponent);
 
+  public resultText = computed(() => {
+    return this._calculatorService.resultText();
+  });
+
+  public subResultText = computed(() => {
+    return this._calculatorService.subResultText();
+  });
+
+  public lastOperator = computed(() => {
+    return this._calculatorService.lastOperator();
+  });
+
   public handleClick(key: string) {
-    console.log('handleClick.key: ', key);
-    this.modifyBackgroundWhenKeyIsLaunched(key);
+    const keyEquivalent = this.handleEquivalents(key);
+    this._calculatorService.construcNumber(keyEquivalent);
+    this.modifyBackgroundWhenKeyIsLaunched(keyEquivalent);
   }
 
   /**
@@ -28,17 +47,9 @@ export class CalculatorComponent {
    * ? @HostListener('document:keyup', ['$event'])
    */
   public handleKeyboardEvent(event: KeyboardEvent) {
-    const keyEquivalents: Record<string, string> = {
-      Escape: 'C',
-      Clear: 'C',
-      Backspace: 'C',
-      Delete: 'C',
-      Enter: '=',
-      '*': 'x',
-      '/': '÷',
-    };
     const key = event.key;
-    const keyValueEquivalent = keyEquivalents[key] ?? key;
+    const keyValueEquivalent = this.handleEquivalents(key);
+    console.log('handleClick.key: ', keyValueEquivalent);
     this.handleClick(keyValueEquivalent);
   }
 
@@ -46,5 +57,16 @@ export class CalculatorComponent {
     this.calculatorButtons().forEach((button) => {
       button.keyboardPressedStyle(key);
     });
+  }
+
+  public handleEquivalents(key: string): string {
+    const keyEquivalents: Record<string, string> = {
+      Escape: 'C',
+      Clear: 'C',
+      Delete: 'C',
+      Enter: '=',
+      x: '*',
+    };
+    return keyEquivalents[key] ?? key;
   }
 }

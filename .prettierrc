@@ -1,5 +1,13 @@
 {
   "htmlWhitespaceSensitivity": "ignore",
-  "printWidth": 120,
-  "singleQuote": true
+  "printWidth": 160,
+  "singleQuote": true,
+  "overrides": [
+    {
+      "files": "*.html",
+      "options": {
+        "parser": "angular"
+      }
+    }
+  ]
 }
